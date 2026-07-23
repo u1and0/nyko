@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>入庫スキャン</title>
+    <link rel="stylesheet" href="/style.css">
+  </head>
+
+  <body class="idle">
+    <div id="status">
+      <p id="message">スキャンしてください</p>
+      <p id="detail"></p>
+      <p id="scanning-text"></p>
+    </div>
+
+    <div id="footer">
+      <div id="bar">
+        <span id="count">本日: 0件</span>
+        <button id="audio-init">🔊 音声を有効化</button>
+        <button id="upload-btn">アップロード</button>
+      </div>
+      <div id="list"></div>
+    </div>
+
+    <script src="/script.js"></script>
+  </body>
+</html>
