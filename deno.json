@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "build:js": "deno run -A npm:esbuild script.ts --bundle --outfile=dist/script.js",
+    "build:js": "deno run -A npm:esbuild src/script.ts --bundle --outfile=dist/script.js",
     "gen:assets": "deno task build:js && deno run --allow-read --allow-write scripts/build_assets.ts",
     "dev": "deno task gen:assets && deno run --allow-env --allow-read --allow-write --allow-net --watch main.ts",
     "build": "deno task gen:assets && deno compile --allow-env --allow-read --allow-write --allow-net --target x86_64-pc-windows-msvc --output dist/nyuko.exe main.ts",

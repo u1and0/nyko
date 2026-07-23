@@ -1,7 +1,7 @@
 // main.ts
-import { handleBufferList, handleScan, handleUpload } from "./api.ts";
-import { indexHtml, scriptJs, styleCss } from "./assets.ts";
-import { loadBuffer } from "./buffer.ts";
+import { handleBufferList, handleScan, handleUpload } from "./src/api.ts";
+import { indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
+import { loadBuffer } from "./src/buffer.ts";
 
 await loadBuffer(); // 前回未アップロード分を復元
 
