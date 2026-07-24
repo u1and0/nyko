@@ -15,7 +15,16 @@ body {
 }
 #message { font-size: 2.5em; font-weight: bold; margin: 0; }
 #detail { font-size: 1.2em; margin-top: 8px; color: #333; }
-#scanning-text { font-size: 1.5em; color: #666; min-height: 1.5em; }
+#scan-input {
+    font-size: 1.5em;
+    font-family: monospace;
+    color: #333;
+    text-align: center;
+    width: 60%;
+    padding: 8px;
+    border: 2px solid #999;
+    border-radius: 4px;
+}
 
 #footer {
     flex: 1;

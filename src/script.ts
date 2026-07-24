@@ -1,4 +1,6 @@
-// esbuildでdist/script.jsへバンドル
+// フロントエンドのスキャナー読み込みの動作
+// esbuildでdist/script.jsへバンドルして、index.htmlと共に配信される。
+//
 type UiState =
   | "idle"
   | "scanning"
@@ -16,21 +18,22 @@ interface ScanResponse {
   barcode: string;
 }
 
-const DEBOUNCE_MS = 50;
 const AUTO_RESET_MS = 3000;
 
-let scanBuf = "";
-let debounceTimer: number | undefined;
 let audioCtx: AudioContext | null = null;
+
+/** キー入力重複排除用の状態変数 */
+let lastKeyTime = 0;
+let lastCode = "";
 
 const body = document.body;
 const messageEl = document.getElementById("message") as HTMLParagraphElement;
 const detailEl = document.getElementById("detail") as HTMLParagraphElement;
-const scanningEl = document.getElementById(
-  "scanning-text",
-) as HTMLParagraphElement;
 const countEl = document.getElementById("count") as HTMLSpanElement;
 const listEl = document.getElementById("list") as HTMLDivElement;
+const scanInput = document.getElementById(
+  "scan-input",
+) as HTMLInputElement;
 const uploadBtnElem = document.getElementById(
   "upload-btn",
 ) as HTMLButtonElement;
@@ -71,9 +74,6 @@ function setState(state: UiState, message: string, detail?: string) {
   body.className = state;
   messageEl.textContent = message;
   detailEl.textContent = detail || "";
-  if (state !== "scanning") {
-    scanningEl.textContent = "";
-  }
   if (state !== "idle") {
     setTimeout(
       () => setState("idle", "スキャンしてください", ""),
@@ -82,6 +82,10 @@ function setState(state: UiState, message: string, detail?: string) {
   }
 }
 
+/**
+ * スキャナー読み込み
+ * api/scanへ書き込む
+ */
 async function submitBarcode(barcode: string) {
   try {
     const res = await fetch("/api/scan", {
@@ -138,30 +142,20 @@ uploadBtnElem.addEventListener("click", async () => {
   }
 });
 
-document.addEventListener("keydown", (e: KeyboardEvent) => {
-  if (e.key === "Enter" || e.key === "Tab") {
-    e.preventDefault();
-    if (scanBuf.length > 0) {
-      submitBarcode(scanBuf);
-      scanBuf = "";
-      scanningEl.textContent = "";
-    }
-    return;
-  }
-  if (e.key.length === 1 && /[0-9A-Za-z\\-]/.test(e.key)) {
-    scanBuf += e.key;
-    body.className = "scanning";
-    messageEl.textContent = "スキャン中…";
-    detailEl.textContent = "";
-    scanningEl.textContent = scanBuf;
+function refocusInput() {
+  scanInput.focus();
+}
 
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      // 文字間タイムアウト = 誤入力とみなしリセット
-      scanBuf = "";
-      setState("idle", "スキャンしてください", "");
-    }, DEBOUNCE_MS * 20) as unknown as number; // キーボード直接打鍵と区別するため通常より長め
-  }
+document.addEventListener("click", refocusInput);
+window.addEventListener("focus", refocusInput);
+scanInput.addEventListener("blur", () => setTimeout(refocusInput, 0));
+
+scanInput.addEventListener("keydown", (e: KeyboardEvent) => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  const raw = scanInput.value.trim();
+  scanInput.value = "";
+  if (raw.length === 0) return;
+  const barcode = raw.replace(/^\*|\*$/g, ""); // CODE39のアスタリスク除去
+  submitBarcode(barcode);
 });
-
-refreshBuffer();
