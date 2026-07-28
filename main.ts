@@ -6,7 +6,7 @@ import {
   handleUpload,
 } from "./src/api.ts";
 import { loadBuffer } from "./src/buffer.ts";
-import { indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
+import { faviconBase64, indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
 import { NYKO_UPLOAD_HOST } from "./dist/config.ts";
 
 await loadBuffer(); // 前回未アップロード分を復元
@@ -34,7 +34,7 @@ Deno.serve({
   onListen: ({ hostname: _, port }) => {
     console.log(`✅ ${description}
   Ctrl+クリックでアクセスしてください👉 http://localhost:${port}
-  remote host: ${NYKO_UPLOAD_HOST}`);
+  Remote host: ${NYKO_UPLOAD_HOST}`);
   },
 }, async (req) => {
   const url = new URL(req.url);
@@ -42,6 +42,12 @@ Deno.serve({
   if (url.pathname === "/" && req.method === "GET") {
     return new Response(indexHtml, {
       headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
+  if (url.pathname === "/favicon.ico" && req.method === "GET") {
+    const bytes = Uint8Array.from(atob(faviconBase64), (c) => c.charCodeAt(0));
+    return new Response(bytes, {
+      headers: { "Content-Type": "image/x-icon" },
     });
   }
   if (url.pathname === "/style.css" && req.method === "GET") {

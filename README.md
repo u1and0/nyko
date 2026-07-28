@@ -3,21 +3,23 @@
 ## ビルド
 詳細は `deno.json/tasks` を参照。
 
-1. gen:config dist/script.jsを出力する。このjsはHTMLに埋め込まれて配信される。
+1. gen:config dist/config.tsを出力する。このjsはHTMLに埋め込まれて配信される。
 1. build:js: dist/script.jsを出力する。このjsはHTMLに埋め込まれて配信される。
 1. gen:assets: dist/assets.ts を出力する。このtsはHTMLに埋め込むファイルのパスを記載する。
 1. dev: 開発用にデプロイする。 `deno task build:js`, `deno task gen:assets` を実行に含む。
+1. build: Mac, Linux用に実行ファイル化する。
+1. exe: Windows用に実行ファイル化する。
 
 
 ### ファイル構想
 .
 ├── deno.json
 ├── deno.lock - 直接編集禁止
+├── main.ts                 - scriptのエントリーポイント。APIエンドポイントが書かれている。
 ├── dist
 │   ├── assets.ts           - html,css,scriptをまとめた配信ファイル。直接編集禁止
 │   ├── config.ts           - リモートサーバー設定を書き込む設定。直接編集禁止
 │   └── script.js           - scriptタグに書かれるjs。直接編集禁止
-├── main.ts                 - scriptのエントリーポイント。APIエンドポイントが書かれている。
 ├── scan_buffer.jsonl       - code39と日時を書き込むバッファ
 ├── scripts
 │   ├── build_assets.ts     - 配信ファイルdist/assets.tsの書き込み指示書
