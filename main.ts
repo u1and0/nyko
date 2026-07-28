@@ -34,7 +34,7 @@ Deno.serve({
   onListen: ({ hostname: _, port }) => {
     console.log(`✅ ${description}
   Ctrl+クリックでアクセスしてください👉 http://localhost:${port}
-  Remote host: ${NYKO_UPLOAD_HOST}`);
+  💻 Remote host: ${NYKO_UPLOAD_HOST} がデプロイ済みであることを確認してください。`);
   },
 }, async (req) => {
   const url = new URL(req.url);

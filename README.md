@@ -1,17 +1,28 @@
 バーコード(CODE39)とその読み込み日時をjsonlとして保持し、サーバー側のSQLITE3 DBへアップロードするアプリケーション。
 
-## ビルド
-詳細は `deno.json/tasks` を参照。
+## Build
+内容は `deno.json/tasks` を参照。
 
-1. gen:config dist/config.tsを出力する。このjsはHTMLに埋め込まれて配信される。
-1. build:js: dist/script.jsを出力する。このjsはHTMLに埋め込まれて配信される。
-1. gen:assets: dist/assets.ts を出力する。このtsはHTMLに埋め込むファイルのパスを記載する。
-1. dev: 開発用にデプロイする。 `deno task build:js`, `deno task gen:assets` を実行に含む。
-1. build: Mac, Linux用に実行ファイル化する。
-1. exe: Windows用に実行ファイル化する。
+1. gen:config dist/config.tsを出力する。このファイルはHTMLに埋め込まれて配信される。
+2. build:js: dist/script.jsを出力する。このファイルはHTMLに埋め込まれて配信される。
+3. gen:assets: dist/assets.ts を出力する。このファイルはHTMLに埋め込むファイルのパスを記載する。
+4. dev: 開発用にデプロイする。 `deno task build:js`, `deno task gen:assets` を実行に含む。
+5. build: Mac, Linux用に実行ファイル化する。 `deno task build:js`, `deno task gen:assets` を実行に含む。
+6. exe: Windows用に実行ファイル化する。 `deno task build:js`, `deno task gen:assets` , `deno task set:icon`を実行に含む
+7. set:icon: Windows用の実行ファイルにアイコンを付与する。WSL2
+
+## Requirements
+set:iconには rcedit.exe がWindowsまたはWSL2上で実行できる必要がある。
+
+```sh
+$ cd scripts && curl -L -o rcedit-x64.exe https://github.com/electron/rcedit/releases/latest/download/rcedit-x64.exe
+```
 
 
-### ファイル構想
+## Deploy
+nyko.exe を適切なパスにコピーする。
+
+## ファイル構成
 .
 ├── deno.json
 ├── deno.lock - 直接編集禁止
@@ -31,4 +42,3 @@
 └── static
     ├── index.html          - 配信されるHTMLの元ファイル。dist/assets.ts に書き込まれる
     └── style.css           - 配信されるCSSの元ファイル。dist/assets.ts に書き込まれる
-

@@ -1,2 +1,5 @@
-/dist
+/dist/
 /**/scan_buffer.jsonl
+/nyko*
+/scripts/rcedit-x64.exe
+/docs/
