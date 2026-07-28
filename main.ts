@@ -1,5 +1,10 @@
 // main.ts
-import { handleBufferList, handleScan, handleUpload } from "./src/api.ts";
+import {
+  APIV1,
+  handleBufferList,
+  handleScan,
+  handleUpload,
+} from "./src/api.ts";
 import { indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
 import { loadBuffer } from "./src/buffer.ts";
 
@@ -23,13 +28,13 @@ Deno.serve({ port: 3000 }, async (req) => {
       headers: { "Content-Type": "application/javascript; charset=utf-8" },
     });
   }
-  if (url.pathname === "/api/scan" && req.method === "POST") {
+  if (url.pathname === `${APIV1}/scan` && req.method === "POST") {
     return await handleScan(req);
   }
-  if (url.pathname === "/api/buffer" && req.method === "GET") {
+  if (url.pathname === `${APIV1}/buffer` && req.method === "GET") {
     return handleBufferList();
   }
-  if (url.pathname === "/api/upload" && req.method === "POST") {
+  if (url.pathname === `${APIV1}/upload` && req.method === "POST") {
     return await handleUpload();
   }
   if (url.pathname === "/health") {

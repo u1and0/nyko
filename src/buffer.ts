@@ -1,6 +1,6 @@
 // buffer.ts
 // その日のスキャン結果を保持する。
-// 「正本」はNS5のentry_log.db。ここはアップロード前の一時領域。
+// 「正本」はリモートのentry_log.db。ここはアップロード前の一時領域。
 
 export interface ScanRecord {
   barcode: string;

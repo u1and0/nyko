@@ -1,9 +1,9 @@
 // api.ts
 import { addScan, archiveAndClear, getBuffer, ScanRecord } from "./buffer.ts";
 
-// NS5側の受信APIエンドポイント。環境に応じて起動引数/envで上書き。
-const NS5_UPLOAD_URL = Deno.env.get("NS5_UPLOAD_URL") ??
-  "http://ns5:8081/api/upload";
+// サーバー側の受信APIエンドポイント。環境に応じて起動引数/envで上書き。
+const HOST = Deno.env.get("NYKO_UPLOAD_HOST") ?? "http://localhost:3000";
+export const APIV1 = "/api/v1";
 
 const BARCODE_RE = /^\d{10}$|^\d{13}$/;
 
@@ -36,7 +36,7 @@ export async function handleUpload(): Promise<Response> {
   }
 
   try {
-    const res = await fetch(NS5_UPLOAD_URL, {
+    const res = await fetch(`${HOST}${APIV1}/upload`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ records }),

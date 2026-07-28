@@ -84,11 +84,11 @@ function setState(state: UiState, message: string, detail?: string) {
 
 /**
  * スキャナー読み込み
- * api/scanへ書き込む
+ * /api/v1/scan へCODE39と日時情報をPOST
  */
 async function submitBarcode(barcode: string) {
   try {
-    const res = await fetch("/api/scan", {
+    const res = await fetch("/api/v1/scan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ barcode }),
@@ -112,7 +112,7 @@ async function submitBarcode(barcode: string) {
 }
 
 async function refreshBuffer() {
-  const res = await fetch("/api/buffer");
+  const res = await fetch("/api/v1/buffer");
   const data = await res.json();
   countEl.textContent = "本日: " + data.buffer.length + "件";
   listEl.innerHTML = data.buffer
@@ -125,7 +125,7 @@ async function refreshBuffer() {
 uploadBtnElem.addEventListener("click", async () => {
   setState("scanning", "アップロード中…", "");
   try {
-    const res = await fetch("/api/upload", { method: "POST" });
+    const res = await fetch("/api/v1/upload", { method: "POST" });
     const data = await res.json();
     if (data.result === "UPLOADED") {
       setState("success", "アップロード完了", data.count + "件");
@@ -133,7 +133,11 @@ uploadBtnElem.addEventListener("click", async () => {
     } else if (data.result === "EMPTY") {
       setState("warn", "アップロード対象がありません", "");
     } else if (data.result === "NETWORK_ERROR") {
-      setState("error", "NS5に接続できません", "LAN接続を確認してください");
+      setState(
+        "error",
+        "サーバーに接続できません",
+        "LAN接続を確認してください",
+      );
     } else {
       setState("error", "アップロード失敗", JSON.stringify(data));
     }
