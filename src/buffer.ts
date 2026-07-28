@@ -60,11 +60,11 @@ export function getBuffer(): ScanRecord[] {
 export async function archiveAndClear(): Promise<void> {
   const stamp = getJPDateTimeNow().replace(/[:.]/g, "-");
   try {
-    await Deno.rename(BUFFER_PATH, `./archive/scan_buffer_${stamp}.jsonl`);
+    await Deno.rename(BUFFER_PATH, `./nyko_archive/scan_buffer_${stamp}.jsonl`);
   } catch {
     // archiveディレクトリが無ければ作成してリトライ
-    await Deno.mkdir("./archive", { recursive: true });
-    await Deno.rename(BUFFER_PATH, `./archive/scan_buffer_${stamp}.jsonl`);
+    await Deno.mkdir("./nyko_archive", { recursive: true });
+    await Deno.rename(BUFFER_PATH, `./nyko_archive/scan_buffer_${stamp}.jsonl`);
   }
   memBuffer = [];
 }

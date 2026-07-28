@@ -22,10 +22,6 @@ const AUTO_RESET_MS = 3000;
 
 let audioCtx: AudioContext | null = null;
 
-/** キー入力重複排除用の状態変数 */
-let lastKeyTime = 0;
-let lastCode = "";
-
 const body = document.body;
 const messageEl = document.getElementById("message") as HTMLParagraphElement;
 const detailEl = document.getElementById("detail") as HTMLParagraphElement;
@@ -43,7 +39,7 @@ const audioaBtnElem = document.getElementById(
 
 audioaBtnElem.addEventListener("click", () => {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext)();
+    audioCtx = new (globalThis.AudioContext)();
   }
 });
 
@@ -151,15 +147,14 @@ function refocusInput() {
 }
 
 document.addEventListener("click", refocusInput);
-window.addEventListener("focus", refocusInput);
+globalThis.addEventListener("focus", refocusInput);
 scanInput.addEventListener("blur", () => setTimeout(refocusInput, 0));
 
 scanInput.addEventListener("keydown", (e: KeyboardEvent) => {
   if (e.key !== "Enter") return;
   e.preventDefault();
-  const raw = scanInput.value.trim();
+  const barcode = scanInput.value.trim();
   scanInput.value = "";
-  if (raw.length === 0) return;
-  const barcode = raw.replace(/^\*|\*$/g, ""); // CODE39のアスタリスク除去
+  if (barcode.length === 0) return;
   submitBarcode(barcode);
 });

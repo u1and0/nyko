@@ -5,7 +5,7 @@ import { NYKO_UPLOAD_HOST } from "../dist/config.ts";
 // サーバー側の受信APIエンドポイント。環境に応じて起動引数/envで上書き。
 export const APIV1 = "/api/v1";
 
-const BARCODE_RE = /^\d{10}$|^\d{13}$/;
+const BARCODE_RE = /^\*(\d{10}|\d{13})\*$/;
 
 export async function handleScan(req: Request): Promise<Response> {
   const body = await req.json().catch(() => null);
