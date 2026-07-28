@@ -11,9 +11,32 @@ import { NYKO_UPLOAD_HOST } from "./dist/config.ts";
 
 await loadBuffer(); // 前回未アップロード分を復元
 
-const localPort = 5538;
+const description =
+  "入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。";
+const port = 5538;
+const URL_TO_OPEN = `http://localhost:${port}`;
 
-Deno.serve({ port: localPort }, async (req) => {
+/**
+ * Windows 限定でexe実行時に
+ * クライアントアプリケーション用としてブラウザを開く
+ */
+function openBrowser() {
+  if (Deno.build.os !== "windows") return;
+  new Deno.Command("rundll32", {
+    args: ["url.dll,FileProtocolHandler", URL_TO_OPEN],
+  }).spawn();
+}
+
+openBrowser();
+
+Deno.serve({
+  port,
+  onListen: ({ hostname: _, port }) => {
+    console.log(`✅ ${description}
+  Ctrl+クリックでアクセスしてください👉 http://localhost:${port}
+  remote host: ${NYKO_UPLOAD_HOST}`);
+  },
+}, async (req) => {
   const url = new URL(req.url);
 
   if (url.pathname === "/" && req.method === "GET") {
@@ -58,7 +81,11 @@ Deno.serve({ port: localPort }, async (req) => {
       status = "Timeout error";
     }
     return Response.json({
+      name: "nyko",
+      description:
+        "入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。",
       local_status: "ok",
+      remote_host: NYKO_UPLOAD_HOST,
       remote_status: status,
     });
   }
