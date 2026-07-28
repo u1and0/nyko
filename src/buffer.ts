@@ -25,6 +25,17 @@ export async function loadBuffer(): Promise<ScanRecord[]> {
   return memBuffer;
 }
 
+function getJPDateTimeNow() {
+  const now = new Date();
+  // スウェーデンロケールは日付区切りにハイフンをつけるため。
+  const jstString = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Tokyo",
+    dateStyle: "short",
+    timeStyle: "medium",
+  }).format(now).replace(" ", "T");
+  return jstString;
+}
+
 /** スキャン1件を追記。同一barcodeの重複は無視（先勝ち） */
 export async function addScan(barcode: string): Promise<ScanRecord | null> {
   if (memBuffer.some((r) => r.barcode === barcode)) {
@@ -32,7 +43,7 @@ export async function addScan(barcode: string): Promise<ScanRecord | null> {
   }
   const record: ScanRecord = {
     barcode,
-    entry_completed_at: new Date().toISOString(),
+    entry_completed_at: getJPDateTimeNow(),
   };
   memBuffer.push(record);
   await Deno.writeTextFile(BUFFER_PATH, JSON.stringify(record) + "\n", {
@@ -47,7 +58,7 @@ export function getBuffer(): ScanRecord[] {
 
 /** アップロード成功後、jsonlをarchiveへ退避しバッファをクリア */
 export async function archiveAndClear(): Promise<void> {
-  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const stamp = getJPDateTimeNow().replace(/[:.]/g, "-");
   try {
     await Deno.rename(BUFFER_PATH, `./archive/scan_buffer_${stamp}.jsonl`);
   } catch {
