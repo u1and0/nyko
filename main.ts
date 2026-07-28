@@ -5,8 +5,9 @@ import {
   handleScan,
   handleUpload,
 } from "./src/api.ts";
-import { indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
 import { loadBuffer } from "./src/buffer.ts";
+import { indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
+import { NYKO_UPLOAD_HOST } from "./dist/config.ts";
 
 await loadBuffer(); // 前回未アップロード分を復元
 
@@ -40,7 +41,26 @@ Deno.serve({ port: localPort }, async (req) => {
     return await handleUpload();
   }
   if (url.pathname === "/health") {
-    return Response.json({ status: "ok" });
+    let status;
+    try {
+      const timeout = 5_000;
+      await Promise.race([
+        fetch(`${NYKO_UPLOAD_HOST}/health`).then((r) => r.json()).then((d) =>
+          d.status
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout after 5s")), timeout)
+        ),
+      ]);
+      status = "ok";
+    } catch (err) {
+      console.error("Health check failed:", err);
+      status = "Timeout error";
+    }
+    return Response.json({
+      local_status: "ok",
+      remote_status: status,
+    });
   }
   return new Response("Not Found", { status: 404 });
 });
