@@ -3,9 +3,10 @@
 ## ビルド
 詳細は `deno.json/tasks` を参照。
 
+1. gen:config dist/script.jsを出力する。このjsはHTMLに埋め込まれて配信される。
 1. build:js: dist/script.jsを出力する。このjsはHTMLに埋め込まれて配信される。
-2. gen:assets: dist/assets.ts を出力する。このtsはHTMLに埋め込むファイルのパスを記載する。
-3. dev: 開発用にデプロイする。 `deno task build:js`, `deno task gen:assets` を実行に含む。
+1. gen:assets: dist/assets.ts を出力する。このtsはHTMLに埋め込むファイルのパスを記載する。
+1. dev: 開発用にデプロイする。 `deno task build:js`, `deno task gen:assets` を実行に含む。
 
 
 ### ファイル構想
