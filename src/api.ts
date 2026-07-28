@@ -1,8 +1,8 @@
 // api.ts
 import { addScan, archiveAndClear, getBuffer, ScanRecord } from "./buffer.ts";
+import { NYKO_UPLOAD_HOST } from "../dist/config.ts";
 
 // サーバー側の受信APIエンドポイント。環境に応じて起動引数/envで上書き。
-const HOST = Deno.env.get("NYKO_UPLOAD_HOST") ?? "http://localhost:3000";
 export const APIV1 = "/api/v1";
 
 const BARCODE_RE = /^\d{10}$|^\d{13}$/;
@@ -36,7 +36,7 @@ export async function handleUpload(): Promise<Response> {
   }
 
   try {
-    const res = await fetch(`${HOST}${APIV1}/upload`, {
+    const res = await fetch(`${NYKO_UPLOAD_HOST}${APIV1}/upload`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ records }),

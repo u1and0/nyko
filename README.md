@@ -14,11 +14,13 @@
 ├── deno.lock - 直接編集禁止
 ├── dist
 │   ├── assets.ts           - html,css,scriptをまとめた配信ファイル。直接編集禁止
+│   ├── config.ts           - リモートサーバー設定を書き込む設定。直接編集禁止
 │   └── script.js           - scriptタグに書かれるjs。直接編集禁止
-├── main.ts                 - scriptのエントリーポイント。エンドポイントが書かれている。
+├── main.ts                 - scriptのエントリーポイント。APIエンドポイントが書かれている。
 ├── scan_buffer.jsonl       - code39と日時を書き込むバッファ
 ├── scripts
-│   └── build_assets.ts     - 配信ファイルdist/assets.tsの書き込み指示書。直接編集禁止
+│   ├── build_assets.ts     - 配信ファイルdist/assets.tsの書き込み指示書
+│   └── build_config.ts     - 配信ファイルdist/config.tsの書き込み指示書
 ├── src
 │   ├── api.ts              - データの取扱とサーバーサイドへの処理
 │   ├── buffer.ts           - その日のスキャン結果を保持する

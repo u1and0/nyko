@@ -10,7 +10,9 @@ import { loadBuffer } from "./src/buffer.ts";
 
 await loadBuffer(); // 前回未アップロード分を復元
 
-Deno.serve({ port: 3000 }, async (req) => {
+const localPort = 5538;
+
+Deno.serve({ port: localPort }, async (req) => {
   const url = new URL(req.url);
 
   if (url.pathname === "/" && req.method === "GET") {
