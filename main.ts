@@ -9,12 +9,22 @@ import { loadBuffer } from "./src/buffer.ts";
 import { faviconBase64, indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
 import { NYKO_UPLOAD_HOST } from "./dist/config.ts";
 
-await loadBuffer(); // 前回未アップロード分を復元
-
-const description =
+const VERSION = "v0.1.1";
+const DESCRIPTION =
   "入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。";
-const port = 5538;
-const URL_TO_OPEN = `http://localhost:${port}`;
+const PORT = parseInt(Deno.env.get("NYKO_PORT") ?? "5538", 10);
+const URL_TO_OPEN = `http://localhost:${PORT}`;
+
+function showHelp() {
+  if (Deno.args.includes("-v")) {
+    console.log(`nyko ${VERSION}`);
+    Deno.exit(0);
+  }
+  if (Deno.args.includes("-h")) {
+    console.log(`nyko ${VERSION}\n${DESCRIPTION}`);
+    Deno.exit(0);
+  }
+}
 
 /**
  * Windows 限定でexe実行時に
@@ -27,14 +37,17 @@ function openBrowser() {
   }).spawn();
 }
 
+showHelp();
+await loadBuffer(); // 前回未アップロード分を復元
 openBrowser();
 
 Deno.serve({
-  port,
-  onListen: ({ hostname: _, port }) => {
-    console.log(`✅ ${description}
-  Ctrl+クリックでアクセスしてください👉 http://localhost:${port}
-  💻 Remote host: ${NYKO_UPLOAD_HOST} がデプロイ済みであることを確認してください。`);
+  port: PORT,
+  onListen: () => {
+    const details = `
+  Ctrl+クリックでアクセスしてください👉 http://localhost:${PORT}
+  💻 Remote host: ${NYKO_UPLOAD_HOST} がデプロイ済みであることを確認してください。`;
+    console.log(`✅ ${DESCRIPTION}${details}`);
   },
 }, async (req) => {
   const url = new URL(req.url);
@@ -88,8 +101,8 @@ Deno.serve({
     }
     return Response.json({
       name: "nyko",
-      description:
-        "入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。",
+      version: VERSION,
+      description: DESCRIPTION,
       local_status: "ok",
       remote_host: NYKO_UPLOAD_HOST,
       remote_status: status,
