@@ -158,3 +158,6 @@ scanInput.addEventListener("keydown", (e: KeyboardEvent) => {
   if (barcode.length === 0) return;
   submitBarcode(barcode);
 });
+
+refocusInput();
+refreshBuffer();

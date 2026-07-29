@@ -52,6 +52,7 @@ Deno.serve({
 }, async (req) => {
   const url = new URL(req.url);
 
+  // Static files
   if (url.pathname === "/" && req.method === "GET") {
     return new Response(indexHtml, {
       headers: { "Content-Type": "text/html; charset=utf-8" },
@@ -73,6 +74,8 @@ Deno.serve({
       headers: { "Content-Type": "application/javascript; charset=utf-8" },
     });
   }
+
+  // API
   if (url.pathname === `${APIV1}/scan` && req.method === "POST") {
     return await handleScan(req);
   }
