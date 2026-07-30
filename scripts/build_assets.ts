@@ -1,4 +1,4 @@
-// AUTO-GENERATED SOURCE : 直接編集禁止
+// 配信用HTMLの構築
 // executed by `deno task gen:assets`
 // index.html / style.css / dist/script.js
 

@@ -1,6 +1,8 @@
 // フロントエンドのスキャナー読み込みの動作
 // esbuildでdist/script.jsへバンドルして、index.htmlと共に配信される。
-//
+
+import { APIV1 } from "./api.ts";
+
 type UiState =
   | "idle"
   | "scanning"
@@ -20,8 +22,6 @@ interface ScanResponse {
 
 const AUTO_RESET_MS = 3000;
 
-let audioCtx: AudioContext | null = null;
-
 const body = document.body;
 const messageEl = document.getElementById("message") as HTMLParagraphElement;
 const detailEl = document.getElementById("detail") as HTMLParagraphElement;
@@ -33,38 +33,6 @@ const scanInput = document.getElementById(
 const uploadBtnElem = document.getElementById(
   "upload-btn",
 ) as HTMLButtonElement;
-const audioaBtnElem = document.getElementById(
-  "audio-init",
-) as HTMLButtonElement;
-
-audioaBtnElem.addEventListener("click", () => {
-  if (!audioCtx) {
-    audioCtx = new (globalThis.AudioContext)();
-  }
-});
-
-function beep(
-  freqStart: number,
-  freqEnd: number,
-  duration: number,
-  type: OscillatorType,
-) {
-  if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freqStart, audioCtx.currentTime);
-  if (freqEnd !== freqStart) {
-    osc.frequency.linearRampToValueAtTime(
-      freqEnd,
-      audioCtx.currentTime + duration,
-    );
-  }
-  gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  osc.connect(gain).connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + duration);
-}
 
 function setState(state: UiState, message: string, detail?: string) {
   body.className = state;
@@ -84,7 +52,7 @@ function setState(state: UiState, message: string, detail?: string) {
  */
 async function submitBarcode(barcode: string) {
   try {
-    const res = await fetch("/api/v1/scan", {
+    const res = await fetch(`${APIV1}/scan`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ barcode }),
@@ -92,13 +60,10 @@ async function submitBarcode(barcode: string) {
     const data: ScanResponse = await res.json();
 
     if (data.result === "INVALID_FORMAT") {
-      beep(200, 200, 0.5, "sawtooth");
       setState("error", "桁数不正です", barcode);
     } else if (data.result === "DUPLICATE_IN_SESSION") {
-      beep(600, 400, 0.3, "sine");
       setState("warn", "本日すでに読み取り済みです", barcode);
     } else if (data.result === "BUFFERED") {
-      beep(1000, 1000, 0.15, "sine");
       setState("success", "登録しました", barcode);
       refreshBuffer();
     }
@@ -108,7 +73,7 @@ async function submitBarcode(barcode: string) {
 }
 
 async function refreshBuffer() {
-  const res = await fetch("/api/v1/buffer");
+  const res = await fetch(`${APIV1}/buffer`);
   const data = await res.json();
   countEl.textContent = "本日: " + data.buffer.length + "件";
   listEl.innerHTML = data.buffer
@@ -121,7 +86,7 @@ async function refreshBuffer() {
 uploadBtnElem.addEventListener("click", async () => {
   setState("scanning", "アップロード中…", "");
   try {
-    const res = await fetch("/api/v1/upload", { method: "POST" });
+    const res = await fetch(`${APIV1}/upload`, { method: "POST" });
     const data = await res.json();
     if (data.result === "UPLOADED") {
       setState("success", "アップロード完了", data.count + "件");
@@ -158,3 +123,6 @@ scanInput.addEventListener("keydown", (e: KeyboardEvent) => {
   if (barcode.length === 0) return;
   submitBarcode(barcode);
 });
+
+refocusInput();
+refreshBuffer();
