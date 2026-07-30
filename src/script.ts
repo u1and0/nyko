@@ -22,8 +22,6 @@ interface ScanResponse {
 
 const AUTO_RESET_MS = 3000;
 
-let audioCtx: AudioContext | null = null;
-
 const body = document.body;
 const messageEl = document.getElementById("message") as HTMLParagraphElement;
 const detailEl = document.getElementById("detail") as HTMLParagraphElement;
@@ -35,38 +33,6 @@ const scanInput = document.getElementById(
 const uploadBtnElem = document.getElementById(
   "upload-btn",
 ) as HTMLButtonElement;
-const audioaBtnElem = document.getElementById(
-  "audio-init",
-) as HTMLButtonElement;
-
-audioaBtnElem.addEventListener("click", () => {
-  if (!audioCtx) {
-    audioCtx = new (globalThis.AudioContext)();
-  }
-});
-
-function beep(
-  freqStart: number,
-  freqEnd: number,
-  duration: number,
-  type: OscillatorType,
-) {
-  if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freqStart, audioCtx.currentTime);
-  if (freqEnd !== freqStart) {
-    osc.frequency.linearRampToValueAtTime(
-      freqEnd,
-      audioCtx.currentTime + duration,
-    );
-  }
-  gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  osc.connect(gain).connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + duration);
-}
 
 function setState(state: UiState, message: string, detail?: string) {
   body.className = state;
@@ -94,13 +60,10 @@ async function submitBarcode(barcode: string) {
     const data: ScanResponse = await res.json();
 
     if (data.result === "INVALID_FORMAT") {
-      beep(200, 200, 0.5, "sawtooth");
       setState("error", "桁数不正です", barcode);
     } else if (data.result === "DUPLICATE_IN_SESSION") {
-      beep(600, 400, 0.3, "sine");
       setState("warn", "本日すでに読み取り済みです", barcode);
     } else if (data.result === "BUFFERED") {
-      beep(1000, 1000, 0.15, "sine");
       setState("success", "登録しました", barcode);
       refreshBuffer();
     }
