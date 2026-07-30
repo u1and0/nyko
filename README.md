@@ -42,3 +42,7 @@ nyko.exe を適切なパスにコピーする。
 └── static
     ├── index.html          - 配信されるHTMLの元ファイル。dist/assets.ts に書き込まれる
     └── style.css           - 配信されるCSSの元ファイル。dist/assets.ts に書き込まれる
+
+## Run
+nyko.exe により自動で開くブラウザにカーソルを合わせる。
+もしブラウザが開かない場合は、ブラウザアドレス欄に `http://localhost:5538` を打ち込む。
