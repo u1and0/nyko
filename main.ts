@@ -45,7 +45,7 @@ Deno.serve({
   onListen: () => {
     const details = `
   Ctrl+クリックでアクセスしてください👉 http://localhost:${PORT}
-  💻 Remote host: ${NYKO_UPLOAD_HOST} がデプロイ済みであることを確認してください。`;
+  💻 Remote host: ${NYKO_UPLOAD_HOST}/health がokステータスであることを確認してください。`;
     console.log(`✅ ${DESCRIPTION}${details}`);
   },
 }, async (req) => {
