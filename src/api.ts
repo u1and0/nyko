@@ -7,7 +7,10 @@ export const APIV1 = "/api/v1";
 
 const BARCODE_RE = /^\*(\d{10}|\d{13})\*$/;
 
-export async function handleScan(req: Request): Promise<Response> {
+export async function handleScan(
+  req: Request,
+  stage: string,
+): Promise<Response> {
   const body = await req.json().catch(() => null);
   const barcode = body?.barcode;
 
@@ -18,7 +21,7 @@ export async function handleScan(req: Request): Promise<Response> {
     );
   }
 
-  const record = await addScan(barcode);
+  const record = await addScan(barcode, stage);
   if (record === null) {
     return Response.json({ result: "DUPLICATE_IN_SESSION", barcode });
   }

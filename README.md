@@ -1,6 +1,23 @@
 バーコード(CODE39)とその読み込み日時をjsonlとして保持し、サーバー側のSQLITE3 DBへアップロードするアプリケーション。
 
 ## Build
+### 標準的なビルド手順
+
+#### 管理課用
+
+```sh
+$ deno task gen:config -- <HOST> <PORT>
+$ deno task exe
+```
+
+#### 担当者用
+
+```sh
+$ deno task gen:config -- <HOST> <PORT> requestor
+$ deno task exe:requestor
+```
+
+
 内容は `deno.json/tasks` を参照。
 
 1. gen:config dist/config.tsを出力する。このファイルはHTMLに埋め込まれて配信される。
@@ -9,7 +26,8 @@
 4. dev: 開発用にデプロイする。 `deno task build:js`, `deno task gen:assets` を実行に含む。
 5. build: Mac, Linux用に実行ファイル化する。 `deno task build:js`, `deno task gen:assets` を実行に含む。
 6. exe: Windows用に実行ファイル化する。 `deno task build:js`, `deno task gen:assets` , `deno task set:icon`を実行に含む
-7. set:icon: Windows用の実行ファイルにアイコンを付与する。WSL2
+7. set:icon: Windows用の実行ファイルにアイコンを付与する。
+
 
 ## Requirements
 set:iconには rcedit.exe がWindowsまたはWSL2上で実行できる必要がある。

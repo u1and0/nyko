@@ -5,8 +5,11 @@
     "gen:assets": "deno task build:js && deno run --allow-read --allow-write scripts/build_assets.ts",
     "dev": "deno task gen:assets && deno run --allow-env --allow-read --allow-write --allow-net --watch main.ts",
     "build": "deno task gen:assets && deno compile --allow-run --allow-env --allow-read --allow-write --allow-net --output nyko main.ts",
+    "build:requestor": "deno task gen:assets && deno compile --allow-run --allow-env --allow-read --allow-write --allow-net --output nyko-requestor main.ts",
     "exe": "deno task gen:assets && deno compile --allow-run --allow-env --allow-read --allow-write --allow-net --target x86_64-pc-windows-msvc --output nyko.exe main.ts && deno task set:icon",
-    "set:icon": "./scripts/rcedit-x64.exe nyko.exe --set-icon static/favicon.ico"
+    "exe:requestor": "deno task gen:assets && deno compile --allow-run --allow-env --allow-read --allow-write --allow-net --target x86_64-pc-windows-msvc --output nyko-requestor.exe main.ts && deno task set:icon:requestor",
+    "set:icon": "./scripts/rcedit-x64.exe nyko.exe --set-icon static/favicon.ico",
+    "set:icon:requestor": "./scripts/rcedit-x64.exe nyko-requestor.exe --set-icon static/favicon.ico"
   },
   "compilerOptions": {
       "lib": ["dom", "dom.iterable", "esnext", "deno.ns"]

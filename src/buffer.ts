@@ -5,6 +5,7 @@
 export interface ScanRecord {
   barcode: string;
   entry_completed_at: string; // ISO8601
+  stage: string; // "manager" | "requestor" スキャンする人の役割
 }
 
 const BUFFER_PATH = "./scan_buffer.jsonl";
@@ -37,13 +38,17 @@ function getJPDateTimeNow() {
 }
 
 /** スキャン1件を追記。同一barcodeの重複は無視（先勝ち） */
-export async function addScan(barcode: string): Promise<ScanRecord | null> {
+export async function addScan(
+  barcode: string,
+  stage: string,
+): Promise<ScanRecord | null> {
   if (memBuffer.some((r) => r.barcode === barcode)) {
     return null; // 本日分ですでにスキャン済み
   }
   const record: ScanRecord = {
     barcode,
     entry_completed_at: getJPDateTimeNow(),
+    stage,
   };
   memBuffer.push(record);
   await Deno.writeTextFile(BUFFER_PATH, JSON.stringify(record) + "\n", {
