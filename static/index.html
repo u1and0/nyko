@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-stage="manager">
   <head>
     <meta charset="UTF-8">
     <title>入庫スキャン</title>
@@ -7,18 +7,31 @@
     <link rel="stylesheet" href="/style.css">
   </head>
 
+  <!-- 既定は管理課モード。script.ts が localStorage の保存値で上書きする -->
   <body class="idle">
+    <div id="stage">
+      <p id="stage-banner">管理課 受領モード</p>
+      <div id="stage-buttons">
+        <button type="button" tabindex="-1" data-stage="manager"
+          class="selected">管理課 受領</button>
+        <button type="button" tabindex="-1"
+          data-stage="requestor">担当者 引取</button>
+      </div>
+    </div>
+
     <div id="status">
       <p id="message">スキャンしてください</p>
       <p id="detail"></p>
-      <input id="scan-input" type="text" inputmode="numeric" autocomplete="off" audofocus>
+      <input id="scan-input" type="text" inputmode="numeric" autocomplete="off"
+        autofocus>
     </div>
 
     <div id="footer">
       <div id="bar">
         <span id="count">本日: 0件</span>
         <button id="upload-btn">アップロード</button>
-        <button id="check-health" onclick="location.href='/health'">サーバー接続確認</button>
+        <button id="check-health"
+          onclick="location.href='/health'">サーバー接続確認</button>
       </div>
       <div id="list"></div>
     </div>

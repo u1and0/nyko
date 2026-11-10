@@ -1,5 +1,6 @@
 // api.ts
 import { addScan, archiveAndClear, getBuffer, ScanRecord } from "./buffer.ts";
+import { isStage } from "./stage.ts";
 import { NYKO_UPLOAD_HOST } from "../dist/config.ts";
 
 // サーバー側の受信APIエンドポイント。環境に応じて起動引数/envで上書き。
@@ -7,12 +8,10 @@ export const APIV1 = "/api/v1";
 
 const BARCODE_RE = /^\*(\d{10}|\d{13})\*$/;
 
-export async function handleScan(
-  req: Request,
-  stage: string,
-): Promise<Response> {
+export async function handleScan(req: Request): Promise<Response> {
   const body = await req.json().catch(() => null);
   const barcode = body?.barcode;
+  const stage = body?.stage;
 
   if (typeof barcode !== "string" || !BARCODE_RE.test(barcode)) {
     return Response.json(
@@ -20,10 +19,17 @@ export async function handleScan(
       { status: 400 },
     );
   }
+  // stage の欠落・不正は黙って補完せず拒否する。
+  if (!isStage(stage)) {
+    return Response.json(
+      { result: "INVALID_STAGE", stage },
+      { status: 400 },
+    );
+  }
 
   const record = await addScan(barcode, stage);
   if (record === null) {
-    return Response.json({ result: "DUPLICATE_IN_SESSION", barcode });
+    return Response.json({ result: "DUPLICATE_IN_SESSION", barcode, stage });
   }
   return Response.json({ result: "BUFFERED", ...record });
 }

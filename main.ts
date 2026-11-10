@@ -6,16 +6,11 @@ import {
 } from "./src/api.ts";
 import { loadBuffer } from "./src/buffer.ts";
 import { faviconBase64, indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
-import { NYKO_STAGE, NYKO_UPLOAD_HOST } from "./dist/config.ts";
+import { NYKO_UPLOAD_HOST } from "./dist/config.ts";
 
 const VERSION = "v0.2.0";
-const MODE = NYKO_STAGE === "manager"
-  ? "管理課による読込"
-  : NYKO_STAGE === "requestor"
-  ? "担当者による読込"
-  : "不明な読込";
 const DESCRIPTION =
-  `${MODE}モードで入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。`;
+  `入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。`;
 const PORT = parseInt(Deno.env.get("NYKO_PORT") ?? "5538", 10);
 const URL_TO_OPEN = `http://localhost:${PORT}`;
 
@@ -81,7 +76,7 @@ Deno.serve({
 
   // API
   if (url.pathname === `${APIV1}/scan` && req.method === "POST") {
-    return await handleScan(req, NYKO_STAGE);
+    return await handleScan(req);
   }
   if (url.pathname === `${APIV1}/buffer` && req.method === "GET") {
     return handleBufferList();
@@ -109,7 +104,6 @@ Deno.serve({
     return Response.json({
       name: "nyko",
       version: VERSION,
-      mode: MODE,
       description: DESCRIPTION,
       local_status: "ok",
       remote_host: NYKO_UPLOAD_HOST,
