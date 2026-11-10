@@ -3,12 +3,12 @@
     "gen:config": "deno run --allow-write scripts/build_config.ts",
     "build:js": "deno run -A npm:esbuild src/script.ts --bundle --outfile=dist/script.js",
     "gen:assets": "deno task build:js && deno run --allow-read --allow-write scripts/build_assets.ts",
-    "dev": "deno task gen:assets && deno run --allow-read --allow-write --allow-net --watch main.ts",
+    "dev": "deno task gen:assets && deno run --allow-env --allow-read --allow-write --allow-net --watch main.ts",
     "build": "deno task gen:assets && deno compile --allow-run --allow-env --allow-read --allow-write --allow-net --output nyko main.ts",
     "exe": "deno task gen:assets && deno compile --allow-run --allow-env --allow-read --allow-write --allow-net --target x86_64-pc-windows-msvc --output nyko.exe main.ts && deno task set:icon",
     "set:icon": "./scripts/rcedit-x64.exe nyko.exe --set-icon static/favicon.ico"
   },
   "compilerOptions": {
-      "lib": ["dom", "dom.iterable", "esnext", "deno.ns"]
+    "lib": ["dom", "dom.iterable", "esnext", "deno.ns"]
   }
 }

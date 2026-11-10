@@ -8,9 +8,9 @@ import { loadBuffer } from "./src/buffer.ts";
 import { faviconBase64, indexHtml, scriptJs, styleCss } from "./dist/assets.ts";
 import { NYKO_UPLOAD_HOST } from "./dist/config.ts";
 
-const VERSION = "v0.1.1";
+const VERSION = "v0.2.0";
 const DESCRIPTION =
-  "入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。";
+  `入庫管理用バーコードのスキャン時刻を記録します。別途 nyko-server の起動が必要です。`;
 const PORT = parseInt(Deno.env.get("NYKO_PORT") ?? "5538", 10);
 const URL_TO_OPEN = `http://localhost:${PORT}`;
 
@@ -45,7 +45,7 @@ Deno.serve({
   onListen: () => {
     const details = `
   Ctrl+クリックでアクセスしてください👉 http://localhost:${PORT}
-  💻 Remote host: ${NYKO_UPLOAD_HOST} がデプロイ済みであることを確認してください。`;
+  💻 Remote host: ${NYKO_UPLOAD_HOST}/health がokステータスであることを確認してください。`;
     console.log(`✅ ${DESCRIPTION}${details}`);
   },
 }, async (req) => {

@@ -1,7 +1,9 @@
 // ホスト環境変数の書き込み
 // Usage: deno task gen:config -- <HOST> <PORT>
-const host = Deno.args[0];
-const port = Deno.args[1];
+// Deno 2.9 の `deno task` は区切りの `--` をそのまま引数へ渡すため取り除く。
+const args = Deno.args[0] === "--" ? Deno.args.slice(1) : Deno.args;
+const host = args[0];
+const port = args[1];
 
 if (!host || !port) {
   console.error("Usage: deno task gen:config -- <HOST> <PORT>");
